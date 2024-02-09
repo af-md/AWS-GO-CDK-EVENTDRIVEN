@@ -44,6 +44,15 @@ func NewHttpApiEventbridgeStack(scope constructs.Construct, id string, props *Ht
 		},
 	})
 
+	// create EventBridge rule
+	lambdaRule := awsevents.NewRule(stack, jsii.String("myLambdalRule"), &awsevents.RuleProps{
+		Description: jsii.String("Run the lambda"),
+		EventBus:    eventBus,
+		EventPattern: &awsevents.EventPattern{
+			Region: jsii.Strings(*props.Env.Region),
+		},
+	})
+
 	// add CloudWatch log group as target
 	logGroup := awslogs.NewLogGroup(stack, jsii.String("MyEventLogGroup"), &awslogs.LogGroupProps{
 		LogGroupName: jsii.String("/aws/events/MyEventBus"),
@@ -100,14 +109,21 @@ func NewHttpApiEventbridgeStack(scope constructs.Construct, id string, props *Ht
 		Description: jsii.String("HTTP API endpoint URL"),
 	})
 
-	// create Lambda function
-
+	// create Lambda function to get the events from dynamo
 	getHandler := awslambda.NewFunction(stack, jsii.String("myGoHandler"), &awslambda.FunctionProps{
 		Runtime: awslambda.Runtime_GO_1_X(),
-		Code:    awslambda.Code_FromAsset(jsii.String("../lambda-handler/."), &awss3assets.AssetOptions{}),
+		Code:    awslambda.Code_FromAsset(jsii.String("../api/lambda-handler/."), &awss3assets.AssetOptions{}),
 		Handler: jsii.String("lambdaHandler"),
 	})
 
+	// create Lambda function to add the events from dynamo
+	addHandler := awslambda.NewFunction(stack, jsii.String("myGoAddHandler"), &awslambda.FunctionProps{
+		Runtime: awslambda.Runtime_GO_1_X(),
+		Code:    awslambda.Code_FromAsset(jsii.String("../api/consumer/."), &awss3assets.AssetOptions{}),
+		Handler: jsii.String("lambdaHandler"),
+	})
+
+	lambdaRule.AddTarget(awseventstargets.NewLambdaFunction(addHandler, &awseventstargets.LambdaFunctionProps{}))
 	// create HTTP API
 	httpApi2 := awsapigatewayv2.NewHttpApi(stack, jsii.String("myHttpApi2"), &awsapigatewayv2.HttpApiProps{
 		ApiName: jsii.String("myHttpApi2"),

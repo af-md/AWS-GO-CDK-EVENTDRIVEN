@@ -13,7 +13,7 @@ import (
 func main() {
 	start := time.Now()
 	fmt.Println("Finding Go Lambda function code directories...")
-	dirs, err := getDirectoriesContainingMainGoFiles("./lambda-handler")
+	dirs, err := getDirectoriesContainingMainGoFiles("./api")
 	if err != nil {
 		fmt.Printf("Failed to get directories containing main.go files: %v\n", err)
 		os.Exit(1)
