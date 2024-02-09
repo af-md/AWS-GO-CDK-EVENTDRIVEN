@@ -9,3 +9,12 @@
 - cdk deploy: to deploy the stack
 
 - cdl destroy: delete all your stack on aws env
+
+
+
+# Track
+
+ - Test the lambda is working fine
+ - Push the event to the lambda and log it
+ - Save the event inside a dynamo table
+ - Create a new lambda that is able to retrieve the events and display them 

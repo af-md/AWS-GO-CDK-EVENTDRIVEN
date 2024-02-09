@@ -100,13 +100,12 @@ func NewHttpApiEventbridgeStack(scope constructs.Construct, id string, props *Ht
 		Description: jsii.String("HTTP API endpoint URL"),
 	})
 
-	// create a new lambda, add it to the api gateway endpoint, deploy it, make the lambda output something. ultimately we would like this to store the events inside dynamo
 	// create Lambda function
 
 	getHandler := awslambda.NewFunction(stack, jsii.String("myGoHandler"), &awslambda.FunctionProps{
 		Runtime: awslambda.Runtime_GO_1_X(),
-		Code:awslambda.Code_FromAsset(jsii.String("../lambda-handler"), &awss3assets.AssetOptions{}),
-		Handler: jsii.String("main"),
+		Code:    awslambda.Code_FromAsset(jsii.String("../lambda-handler/."), &awss3assets.AssetOptions{}),
+		Handler: jsii.String("lambdaHandler"),
 	})
 
 	// create HTTP API
