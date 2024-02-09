@@ -154,5 +154,3 @@ func getRegion() string {
 	}
 	return region
 }
-
-// just researching more about cdk?? ckd is complex but not that complex. the only thing to keep in mind when building a poc is not to waste time on things that don't matter
