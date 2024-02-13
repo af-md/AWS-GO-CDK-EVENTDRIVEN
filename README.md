@@ -13,7 +13,9 @@
 
 
 # Track
-
- - Push the event to the lambda and log it
  - Save the event inside a dynamo table
- - Create a new lambda that is able to retrieve the events and display them 
+   - DYNAMODB
+   - SEND EVENT
+   - LOOK AT LAMBDA LOGS
+   - WHAT HAPPENED TO LAMBDA'S
+ - Create a new lambda that is able to retrieve the events and display them

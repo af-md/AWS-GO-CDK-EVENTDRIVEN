@@ -5,6 +5,7 @@ import (
 
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsapigatewayv2"
+	"github.com/aws/aws-cdk-go/awscdk/v2/awsdynamodb"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsevents"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awseventstargets"
 	"github.com/aws/aws-cdk-go/awscdk/v2/awsiam"
@@ -140,6 +141,17 @@ func NewHttpApiEventbridgeStack(scope constructs.Construct, id string, props *Ht
 		Value:       httpApi2.ApiEndpoint(),
 		Description: jsii.String("HTTP API Endpoint"),
 	})
+
+	// create dynamodb
+	eventTable := awsdynamodb.NewTable(stack, jsii.String("EventTable"), &awsdynamodb.TableProps{
+		PartitionKey: &awsdynamodb.Attribute{
+			Name: jsii.String("id"),
+			Type: "STRING",
+		},
+		TableName: jsii.String("EventTable"),
+	})
+
+	eventTable.GrantWriteData(addHandler)
 
 	return stack
 }
