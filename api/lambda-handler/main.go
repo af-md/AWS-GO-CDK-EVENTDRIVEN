@@ -23,14 +23,9 @@ func init() {
 }
 
 func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
 	log, err := zap.NewProduction()
 	if err != nil {
 		panic(fmt.Sprintf("could not create log: %v", err))
-	}
-
-	if err != nil {
-		log.Fatal("could not load AWS config", zap.Error(err))
 	}
 
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("eu-west-2"))
@@ -39,17 +34,15 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 	}
 
 	dc := dynamodb.NewFromConfig(cfg)
-
+	tn := jsii.String("EventTable")
 	items, err := dc.Scan(ctx, &dynamodb.ScanInput{
-		TableName: jsii.String("EventTable"),
+		TableName: tn,
 	})
-
 	if err != nil {
 		log.Fatal("unable to scan from dynamo, %v", zap.Error(err))
 	}
 
 	var evs []response
-
 	err = attributevalue.UnmarshalListOfMaps(items.Items, &evs)
 	if err != nil {
 		log.Fatal("unable to unmarshal list of maps items, %v", zap.Error(err))

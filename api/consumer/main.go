@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -26,14 +25,6 @@ func lambdaHandler(context context.Context, event events.EventBridgeEvent) {
 		panic(fmt.Sprintf("could not create log: %v", err))
 	}
 
-	eventjs, err := json.Marshal(event)
-
-	if err != nil {
-		log.Fatal("could not load AWS config", zap.Error(err))
-	}
-
-	log.Info(string(eventjs))
-
 	cfg, err := config.LoadDefaultConfig(context, config.WithRegion("eu-west-2"))
 	if err != nil {
 		log.Fatal("unable to load SDK config, %v", zap.Error(err))
@@ -44,14 +35,11 @@ func lambdaHandler(context context.Context, event events.EventBridgeEvent) {
 	}
 
 	itemV := makeItem(event)
-
 	table := "EventTable"
 	input := &dynamodb.PutItemInput{
 		TableName: jsii.String(table),
 		Item:      itemV,
 	}
-
-	// Using the Config value,sl create the DynamoDB client
 	dc := dynamodb.NewFromConfig(cfg)
 	_, err = dc.PutItem(context, input)
 	if err != nil {
