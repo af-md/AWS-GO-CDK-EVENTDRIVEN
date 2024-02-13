@@ -152,6 +152,7 @@ func NewHttpApiEventbridgeStack(scope constructs.Construct, id string, props *Ht
 	})
 
 	eventTable.GrantWriteData(addHandler)
+	eventTable.GrantFullAccess(getHandler)
 
 	return stack
 }
